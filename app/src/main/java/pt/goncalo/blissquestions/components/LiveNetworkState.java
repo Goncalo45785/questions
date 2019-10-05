@@ -1,4 +1,4 @@
-package pt.goncalo.blissquestions.viewmodel.components;
+package pt.goncalo.blissquestions.components;
 
 import android.Manifest;
 import android.app.Application;
@@ -15,7 +15,7 @@ import androidx.annotation.RequiresPermission;
 import androidx.lifecycle.LiveData;
 
 public class LiveNetworkState extends LiveData<Boolean> {
-    public static final String TAG = "LiveNetworkState";
+    public static final String TAG = LiveNetworkState.class.getSimpleName();
 
     private ConnectivityManager connManager;
     private NetworkCallback networkCallback = new NetworkCallback() {

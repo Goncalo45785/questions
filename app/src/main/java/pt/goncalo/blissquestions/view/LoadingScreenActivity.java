@@ -14,6 +14,7 @@ import pt.goncalo.blissquestions.R;
 import pt.goncalo.blissquestions.model.Client;
 
 public class LoadingScreenActivity extends AppCompatActivity {
+    private final String TAG = LoadingScreenActivity.class.getSimpleName();
     TextView statusTv;
     Button retryButton;
     ProgressBar loadingSpinner;

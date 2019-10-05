@@ -12,7 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Client {
-    private static final String TAG = "Client";
+    private static final String TAG = Client.class.getSimpleName();
     public static final String BASE_URL = "https://private-bbbe9-blissrecruitmentapi.apiary-mock"
             + ".com/";
 
