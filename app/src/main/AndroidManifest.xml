@@ -24,6 +24,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.QuestionListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!--This activity will be started when an URL with the format scheme://host is
+                opened -->
+                <data
+                    android:scheme="@string/scheme_filter"
+                    android:host="@string/host_filter"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
