@@ -20,6 +20,8 @@ public class Client {
     private Retrofit retrofit;
     private Endpoints api;
 
+    MutableLiveData<Boolean> serverHealth;
+
     private Client() {
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -27,6 +29,7 @@ public class Client {
                 GsonConverterFactory.create())
                 .build();
         api = retrofit.create(Endpoints.class);
+        serverHealth = new MutableLiveData<>();
     }
 
     public static Client getInstance() {
@@ -37,7 +40,7 @@ public class Client {
     }
 
     public LiveData<Boolean> getServerHealth() {
-        MutableLiveData<Boolean> result = new MutableLiveData<>();
+
         Log.i(TAG, "getServerHealth Requesting...");
         api.getHealth().enqueue(new Callback<Health>() {
             @Override
@@ -46,15 +49,15 @@ public class Client {
                 Health healthStatus = response.body();
                 Log.i(TAG, String.format("getServerHealth Response [%s] %s", statusCode,
                         healthStatus.getStatus()));
-                result.postValue(healthStatus.getStatus().equals(Health.STATUS_OK));
+                serverHealth.postValue(healthStatus.getStatus().equals(Health.STATUS_OK));
             }
 
             @Override
             public void onFailure(Call<Health> call, Throwable t) {
                 Log.wtf(TAG, "getServerHealth Failed");
-                result.postValue(false);
+                serverHealth.postValue(false);
             }
         });
-        return result;
+        return serverHealth;
     }
 }

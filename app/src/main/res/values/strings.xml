@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">BlissQuestions</string>
-    <string name="status_ok">Status: OK</string>
-    <string name="status_nok">Status: NOK</string>
-    <string name="status_checking">Status: Checking …</string>
+    <string name="status_ok">Service available.</string>
+    <string name="status_nok">The service is not available right now.</string>
+    <string name="status_checking">Checking for service availability …</string>
+    <string name="retryButton">Retry</string>
 </resources>
