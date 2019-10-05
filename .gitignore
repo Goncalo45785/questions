@@ -257,3 +257,4 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/macos,windows,android,synology,androidstudio
+.idea
