@@ -84,7 +84,7 @@ public class QuestionListActivity extends AppCompatActivity {
             } else if (questionViewModel.isInSearchMode()){
                 endSearch();
             }
-        } else if (query != null) {
+        } else {
             /* fill the search box and trigger the search functionality. If the question_filter
             parameter is present but has an empty value the the user should be placed at the
             filter variant with no input inserted but with the input box focused */
@@ -93,8 +93,11 @@ public class QuestionListActivity extends AppCompatActivity {
                 /* when the query is an empty string, submitting the search will not trigger the
                 search intent*/
                 searchView.requestFocus();
+                searchView.setQuery(query, false);
+                searchView.setIconified(false);
             } else {
                 searchView.setQuery(query, true);
+                searchView.setIconified(false);
             }
             //TODO handle query being empty (atm is not triggering search intent)
         }
@@ -160,7 +163,8 @@ public class QuestionListActivity extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        //searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by
+        // default
         searchView.setOnCloseListener(() -> {
             endSearch();
             //returning false will allow the system to take care of clearing and closing the view
