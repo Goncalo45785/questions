@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -39,34 +42,108 @@ public class QuestionListActivity extends AppCompatActivity {
 
         questionViewModel = ViewModelProviders.of(this).get(QuestionViewModel.class);
 
-        continueWithStartingIntent(getIntent());
+        continueWithIntent(getIntent());
     }
 
-    private void continueWithStartingIntent(Intent intent) {
-        if (intent != null && intent.getData() != null) {
-            String queryParam = intent.getData().getQueryParameter(
-                    getString(R.string.query_filter));
-            Log.i(TAG, String.format("Activity started from url with param = %s", queryParam));
-
-            /*TODO: Notice that this format contains a query parameter which should be used to fill
-            the search box and trigger the search functionality. If the question_filter parameter
-             is missing the user should simply be placed at the listing. If the question_filter
-             parameter is present but has an empty value the the user should be placed at the
-             filter variant with no input inserted but with the input box focused*/
+    private void continueWithIntent(Intent intent) {
+        if (isUrlIntent(intent)) {
+            handleIntentFromURL(intent);
         } else {
             Log.i(TAG, "Activity not started from URL");
-            questionViewModel.getQuestions().observe(this, this::onQuestionsReceived);
-
+            questionViewModel.getQuestions().observe(this, this::onUnfilteredQuestionsReceived);
         }
     }
 
-    private void onQuestionsReceived(List<Question> questions) {
-        Log.i(TAG, questions.size() + "");
-        if (listAdapter == null) {
-            listAdapter = new QuestionListAdapter(questions);
-            listView.setAdapter(listAdapter);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (isSearchIntent(intent)) {
+            handleIntentFromSearch(intent);
+        } else if (isUrlIntent(intent)) {
+            handleIntentFromURL(intent);
+        }
+    }
+
+    private boolean isSearchIntent(Intent intent) {
+        return Intent.ACTION_SEARCH.equals(intent.getAction());
+    }
+
+    private boolean isUrlIntent(Intent intent) {
+        return intent != null && intent.getData() != null;
+    }
+
+    private void handleIntentFromURL(Intent intent) {
+        String query = intent.getData().getQueryParameter(getString(R.string.query_filter));
+        Log.i(TAG, String.format("Handling intent from url with param = %s", query));
+
+        if (query == null) {
+            /*If the question_filter parameter is missing the user should simply be placed at the
+            listing. hasUnfilteredQuestions is used to avoid re-fetching questions.*/
+            if (!questionViewModel.hasQuestions()) {
+                questionViewModel.getQuestions();
+            } else if (questionViewModel.isInSearchMode()){
+                endSearch();
+            }
+        } else if (query != null) {
+            /* fill the search box and trigger the search functionality. If the question_filter
+            parameter is present but has an empty value the the user should be placed at the
+            filter variant with no input inserted but with the input box focused */
+
+            if (query.isEmpty()) {
+                /* when the query is an empty string, submitting the search will not trigger the
+                search intent*/
+                searchView.requestFocus();
+            } else {
+                searchView.setQuery(query, true);
+            }
+            //TODO handle query being empty (atm is not triggering search intent)
+        }
+    }
+
+    private void handleIntentFromSearch(Intent intent) {
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        Log.i(TAG, String.format("Handling intent from search with param = %s", query));
+        questionViewModel.getQuestionsForFilter(query).observe(this,
+                    this::onFilteredQuestionsReceived);
+    }
+
+    private void endSearch() {
+        Log.i(TAG, "Search closed. Clearing.");
+        questionViewModel.clearSearch();
+        List<Question> lastKnownQuestions = questionViewModel.getCachedQuestions();
+        if (questionViewModel.isInSearchMode() && lastKnownQuestions != null && !lastKnownQuestions.isEmpty()) {
+            initListAdapter(lastKnownQuestions);
+            questionViewModel.setSearchMode(false);
+            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
+                    Color.GREEN);
+        } else if (lastKnownQuestions == null || lastKnownQuestions.isEmpty()){
+            questionViewModel.getQuestions();
+        }
+    }
+
+    private void onFilteredQuestionsReceived(List<Question> filteredQuestions) {
+        if (listAdapter == null || !questionViewModel.isInSearchMode()) {
+            initListAdapter(filteredQuestions);
+            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
+                    Color.RED);
+            questionViewModel.setSearchMode(true);
         }
         listAdapter.notifyDataSetChanged();
+    }
+
+    private void onUnfilteredQuestionsReceived(List<Question> unfilteredQuestions) {
+        if (listAdapter == null || questionViewModel.isInSearchMode()) {
+            initListAdapter(unfilteredQuestions);
+            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
+                    Color.GREEN);
+            questionViewModel.setSearchMode(false);
+        }
+        listAdapter.notifyDataSetChanged();
+    }
+
+    private void initListAdapter(List<Question> questions) {
+        listAdapter = new QuestionListAdapter(questions);
+        listView.setAdapter(listAdapter);
     }
 
     private void assignViews() {
@@ -79,6 +156,16 @@ public class QuestionListActivity extends AppCompatActivity {
         listView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setOnCloseListener(() -> {
+            endSearch();
+            //returning false will allow the system to take care of clearing and closing the view
+            return false;
+        });
     }
 
 

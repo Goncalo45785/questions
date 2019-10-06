@@ -5,7 +5,6 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 
 import java.util.List;
 
@@ -14,6 +13,7 @@ import pt.goncalo.blissquestions.model.entity.Question;
 
 public class QuestionViewModel extends AndroidViewModel {
     private QuestionRepository questionRepository;
+    private boolean isInSearchMode;
 
     public QuestionViewModel(@NonNull Application application) {
         super(application);
@@ -26,13 +26,30 @@ public class QuestionViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Question>> getQuestionsForFilter(String filter) {
-        LiveData<List<Question>> result = questionRepository.getQuestions(filter);
-        return result;
+        return questionRepository.getQuestionsWithFilter(filter);
     }
 
     public LiveData<List<Question>> getQuestions() {
-        return getQuestionsForFilter("");
+        return questionRepository.getQuestions();
     }
 
+    public boolean hasQuestions() {
+        return questionRepository.hasUnfilteredQuestions();
+    }
 
+    public void setSearchMode(boolean inSearchMode) {
+        this.isInSearchMode = inSearchMode;
+    }
+
+    public boolean isInSearchMode() {
+        return isInSearchMode;
+    }
+
+    public List<Question> getCachedQuestions() {
+        return questionRepository.getLastKnownQuestions();
+    }
+
+    public void clearSearch() {
+        questionRepository.clearFilteredQuestions();
+    }
 }

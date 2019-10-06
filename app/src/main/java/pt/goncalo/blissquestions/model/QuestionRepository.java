@@ -5,11 +5,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import pt.goncalo.blissquestions.model.entity.Health;
 import pt.goncalo.blissquestions.model.entity.Question;
@@ -25,9 +23,10 @@ public class QuestionRepository {
     private Client apiClient;
 
     private MutableLiveData<Boolean> serverHealth;
-    private MutableLiveData<List<Question>> questions;
+    private MutableLiveData<List<Question>> unfilteredQuestions;
+    private MutableLiveData<List<Question>> filteredQuestions;
 
-    private int loadedQuestions;
+    private int loadedFilteredQuestions, loadedUnfilteredQuestions  = 0;
 
     private QuestionRepository() {
         apiClient = new Client();
@@ -71,13 +70,38 @@ public class QuestionRepository {
         return serverHealth;
     }
 
-    public LiveData<List<Question>> getQuestions(String filter) {
-        if (questions == null) {
-            questions = new MutableLiveData<>();
-            questions.setValue(new LinkedList<>());
+    public void clearUnfilteredQuestions() {
+        if (filteredQuestions != null) {
+            unfilteredQuestions.setValue(new ArrayList<>(0));
+            loadedUnfilteredQuestions = 0;
         }
+    }
 
-        apiClient.getQuestions(REQUEST_LIMIT, loadedQuestions, filter, new Callback<List<Question>>() {
+    public void clearFilteredQuestions() {
+        if (filteredQuestions != null) {
+            filteredQuestions.setValue(new ArrayList<>(0));
+            loadedFilteredQuestions = 0;
+        }
+    }
+
+    public LiveData<List<Question>> getQuestionsWithFilter(String filter) {
+        return getQuestions(filter);
+    }
+
+    public LiveData<List<Question>> getQuestions() {
+        return getQuestions(null);
+    }
+
+    public List<Question> getLastKnownQuestions() {
+        return unfilteredQuestions.getValue();
+    }
+
+    private LiveData<List<Question>> getQuestions(String filter) {
+        boolean isFiltered = filter != null;
+        initQuestionLists(isFiltered);
+
+        apiClient.getQuestions(REQUEST_LIMIT, loadedUnfilteredQuestions, filter,
+                new Callback<List<Question>>() {
             @Override
             public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
                 int statusCode = response.code();
@@ -85,13 +109,7 @@ public class QuestionRepository {
                 if (questionList != null) {
                     Log.i(TAG, String.format("getQuestions Response [%s] Size: %s", statusCode,
                             questionList.size()));
-                    if (!questionList.isEmpty()) {
-                        List<Question> list = questions.getValue();
-                        if (list.addAll(questionList)) {
-                            questions.postValue(list);
-                            loadedQuestions = list.size();
-                        }
-                    }
+                    updateQuestionLists(isFiltered, questionList);
                 } else {
                     Log.i(TAG, String.format("getQuestions Response [%s]", statusCode));
                 }
@@ -102,6 +120,46 @@ public class QuestionRepository {
                 Log.i(TAG, String.format("getQuestionsFailed: %s", t.getMessage()));
             }
         });
-        return questions;
+        return isFiltered ? filteredQuestions : unfilteredQuestions;
+    }
+
+    public boolean hasUnfilteredQuestions() {
+        return loadedUnfilteredQuestions > 0;
+    }
+
+    public boolean hasFilteredQuestions() {
+        return loadedFilteredQuestions > 0;
+    }
+
+    private void initQuestionLists(boolean isFiltered) {
+        if (isFiltered) {
+            if (filteredQuestions == null ) {
+                filteredQuestions = new MutableLiveData<>();
+                filteredQuestions.setValue(new ArrayList<>(0));
+            }
+        } else {
+            if (unfilteredQuestions == null ) {
+                unfilteredQuestions = new MutableLiveData<>();
+                unfilteredQuestions.setValue(new ArrayList<>(0));
+            }
+        }
+    }
+
+    private void updateQuestionLists(boolean isFiltered, List<Question> newQuestions) {
+        if (!newQuestions.isEmpty()) {
+            if (isFiltered) {
+                List<Question> list = filteredQuestions.getValue();
+                if (list.addAll(newQuestions)) {
+                    filteredQuestions.postValue(list);
+                    loadedFilteredQuestions = list.size();
+                }
+            } else {
+                List<Question> list = unfilteredQuestions.getValue();
+                if (list.addAll(newQuestions)) {
+                    unfilteredQuestions.postValue(list);
+                    loadedUnfilteredQuestions = list.size();
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package pt.goncalo.blissquestions.view.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -33,10 +36,17 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.itemView.setOnClickListener(v -> {
+            //TODO open details
+        });
         Question question = dataset.get(position);
         holder.title.setText(question.getQuestion());
         holder.date.setText(question.getPublishedAt());
-        //TODO load image
+        Picasso.get()
+                .load(question.getThumbUrl())
+                .placeholder(R.drawable.ic_broken_image_primary_24dp)
+                .error(R.drawable.ic_broken_image_primary_24dp)
+                .into(holder.thumbnail);
     }
 
     @Override
@@ -47,6 +57,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView thumbnail;
         public TextView title, date;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             thumbnail = itemView.findViewById(R.id.thumbnail);
