@@ -4,6 +4,7 @@
     <string name="status_nok">The service is not available right now.</string>
     <string name="status_checking">Checking for service availability …</string>
     <string name="retryButton">Retry</string>
+    <string name="load_more">Load More</string>
 
 
     <string name="scheme_filter" translatable="false">blissrecruitment</string>

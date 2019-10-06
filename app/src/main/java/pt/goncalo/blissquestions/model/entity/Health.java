@@ -1,4 +1,4 @@
-package pt.goncalo.blissquestions.model;
+package pt.goncalo.blissquestions.model.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
