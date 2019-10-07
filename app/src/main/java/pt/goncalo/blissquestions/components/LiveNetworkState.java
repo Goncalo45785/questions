@@ -15,17 +15,19 @@ import androidx.annotation.RequiresPermission;
 import androidx.lifecycle.LiveData;
 
 public class LiveNetworkState extends LiveData<Boolean> {
-    public static final String TAG = LiveNetworkState.class.getSimpleName();
+    private final String TAG = LiveNetworkState.class.getSimpleName();
 
     private ConnectivityManager connManager;
     private NetworkCallback networkCallback = new NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
+            Log.i(TAG, "Network Available");
             postValue(true);
         }
 
         @Override
         public void onLost(Network network) {
+            Log.i(TAG, "Network Unavailable");
             postValue(false);
         }
 
@@ -47,14 +49,10 @@ public class LiveNetworkState extends LiveData<Boolean> {
 
         NetworkInfo activeNetwork = connManager.getActiveNetworkInfo();
 
-        postValue(activeNetwork.isConnected());
+        postValue(activeNetwork != null && activeNetwork.isConnected());
+        Log.i(TAG, "Network Available » " + (activeNetwork != null && activeNetwork.isConnected()));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connManager.registerDefaultNetworkCallback(networkCallback);
-        } else {
-            Builder requestBuilder = new Builder();
-            connManager.registerNetworkCallback(requestBuilder.build(), networkCallback);
-        }
+        connManager.registerDefaultNetworkCallback(networkCallback);
     }
 
     @Override

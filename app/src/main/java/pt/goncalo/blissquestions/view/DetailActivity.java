@@ -22,12 +22,13 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import pt.goncalo.blissquestions.R;
+import pt.goncalo.blissquestions.components.NetworkStatus;
 import pt.goncalo.blissquestions.model.entity.Choice;
 import pt.goncalo.blissquestions.model.entity.Question;
 import pt.goncalo.blissquestions.utils.ActivityUtils;
 import pt.goncalo.blissquestions.viewmodel.DetailViewModel;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends NetworkAwareActivity {
     private final String TAG = DetailActivity.class.getSimpleName();
     private final int EXTRA_DEFAULT = -1;
 
@@ -42,6 +43,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        enableOverlayOnNetworkChange(NetworkStatus.DISCONNECTED);
         assignViews();
 
         detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.SearchView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,12 +17,13 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import java.util.List;
 
 import pt.goncalo.blissquestions.R;
+import pt.goncalo.blissquestions.components.NetworkStatus;
 import pt.goncalo.blissquestions.model.entity.Question;
 import pt.goncalo.blissquestions.utils.ActivityUtils;
 import pt.goncalo.blissquestions.view.adapter.QuestionListAdapter;
 import pt.goncalo.blissquestions.viewmodel.QuestionViewModel;
 
-public class QuestionListActivity extends AppCompatActivity {
+public class QuestionListActivity extends NetworkAwareActivity {
     private final String TAG = QuestionListActivity.class.getSimpleName();
 
     private QuestionViewModel questionViewModel;
@@ -38,6 +38,7 @@ public class QuestionListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_list);
+        enableOverlayOnNetworkChange(NetworkStatus.DISCONNECTED);
         assignViews();
 
         questionViewModel = ViewModelProviders.of(this).get(QuestionViewModel.class);

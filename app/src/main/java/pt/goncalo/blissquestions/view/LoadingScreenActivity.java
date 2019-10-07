@@ -12,10 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import pt.goncalo.blissquestions.R;
+import pt.goncalo.blissquestions.components.NetworkStatus;
 import pt.goncalo.blissquestions.model.Client;
 import pt.goncalo.blissquestions.viewmodel.QuestionViewModel;
 
-public class LoadingScreenActivity extends AppCompatActivity {
+public class LoadingScreenActivity extends NetworkAwareActivity {
     private final String TAG = LoadingScreenActivity.class.getSimpleName();
     private QuestionViewModel questionVm;
     private TextView statusTv;
@@ -26,6 +27,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
+        enableOverlayOnNetworkChange(NetworkStatus.DISCONNECTED);
         assignViews();
 
         questionVm = ViewModelProviders.of(this).get(QuestionViewModel.class);

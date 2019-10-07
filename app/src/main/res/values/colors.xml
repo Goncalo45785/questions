@@ -10,6 +10,7 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
 
+    <color name="overlayBackgroundColor">#B3363636</color>
     <color name="darkGray">#3F3F3F</color>
     <color name="lightGray">#BBBBBB</color>
 

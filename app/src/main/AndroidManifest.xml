@@ -16,8 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".view.NoConnectionOverlayActivity"
+            android:theme="@style/TransparentTheme"/>
+        <activity
             android:name=".view.LoadingScreenActivity"
-            android:theme="@style/LoadingActivityTheme">
+            android:theme="@style/FullScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
