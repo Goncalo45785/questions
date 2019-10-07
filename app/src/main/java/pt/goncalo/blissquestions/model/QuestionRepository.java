@@ -70,18 +70,29 @@ public class QuestionRepository {
         return serverHealth;
     }
 
-    public void clearUnfilteredQuestions() {
-        if (filteredQuestions != null) {
-            unfilteredQuestions.setValue(new ArrayList<>(0));
-            loadedUnfilteredQuestions = 0;
-        }
-    }
+    public LiveData<Question> vote(int questionId, String choice) {
+        MutableLiveData<Question> result = new MutableLiveData<>();
+        apiClient.vote(questionId, choice, new Callback<Question>() {
+            @Override
+            public void onResponse(Call<Question> call, Response<Question> response) {
+                int statusCode = response.code();
+                Question question = response.body();
+                if (question != null) {
+                    Log.i(TAG, String.format("vote Response [%s] Choice: %s",
+                            statusCode,
+                            choice));
+                    result.postValue(question);
+                } else {
+                    Log.i(TAG, String.format("vote Bad Response [%s]", statusCode));
+                }
+            }
 
-    public void clearFilteredQuestions() {
-        if (filteredQuestions != null) {
-            filteredQuestions.setValue(new ArrayList<>(0));
-            loadedFilteredQuestions = 0;
-        }
+            @Override
+            public void onFailure(Call<Question> call, Throwable t) {
+                Log.i(TAG, String.format("vote Failed: %s", t.getMessage()));
+            }
+        });
+        return result;
     }
 
     public LiveData<Question> getQuestionById(int id) {
@@ -126,6 +137,20 @@ public class QuestionRepository {
 
     public List<Question> getLastKnownQuestions() {
         return unfilteredQuestions.getValue();
+    }
+
+    public void clearUnfilteredQuestions() {
+        if (filteredQuestions != null) {
+            unfilteredQuestions.setValue(new ArrayList<>(0));
+            loadedUnfilteredQuestions = 0;
+        }
+    }
+
+    public void clearFilteredQuestions() {
+        if (filteredQuestions != null) {
+            filteredQuestions.setValue(new ArrayList<>(0));
+            loadedFilteredQuestions = 0;
+        }
     }
 
     private LiveData<List<Question>> getQuestions(String filter) {

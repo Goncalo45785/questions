@@ -8,8 +8,7 @@
     <string name="search_hint">Search questions …</string>
     <string name="detail_published_date">Published: </string>
     <string name="detail_id">Id#: </string>
-    <string name="detail_votes">#Votes:</string>
-
+    <string name="detail_votes"> #Votes:</string>
 
 
     <string name="scheme_filter" translatable="false">blissrecruitment</string>

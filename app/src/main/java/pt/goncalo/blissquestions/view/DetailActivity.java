@@ -54,7 +54,7 @@ public class DetailActivity extends AppCompatActivity {
             int questionId = intent.getIntExtra(getString(R.string.question_id_extra_key), EXTRA_DEFAULT);
             if (questionId != EXTRA_DEFAULT) {
                 detailViewModel.getQuestionById(questionId).observe(this,
-                        this::onQuestionDetailChanged);
+                        question -> onQuestionDetailChanged(question, true));
                 return;
             }
         } else if (ActivityUtils.isUrlIntent(intent)) {
@@ -72,20 +72,29 @@ public class DetailActivity extends AppCompatActivity {
                 return;
             }
             detailViewModel.getQuestionById(questionId).observe(this,
-                    this::onQuestionDetailChanged);
+                    question -> onQuestionDetailChanged(question, true));
             return;
         }
         finish();
     }
 
     private void submitAnswer(List<Choice> choices) {
-        int index = choicesContainer.getCheckedRadioButtonId() - (int) 1;
-        detailViewModel.vote(choices.get(index).getChoice());
-
-        //TODO submit answer if not empty
+        RadioButton chosenBtn =
+                choicesContainer.findViewById(choicesContainer.getCheckedRadioButtonId());
+        String clearChoice = "";
+        String[] brokenChoice =
+                chosenBtn.getText().toString().split(getString(R.string.detail_votes));
+        if (brokenChoice.length >= 1) {
+            clearChoice = brokenChoice[0];
+        }
+        Log.i(TAG, String.format("Voting on answer %s", clearChoice));
+        if (!clearChoice.isEmpty()) {
+            detailViewModel.vote(clearChoice).observe(this,
+                    question -> onQuestionDetailChanged(question, false));
+        }
     }
 
-    private void onQuestionDetailChanged(Question question) {
+    private void onQuestionDetailChanged(Question question, boolean enableChoice) {
         if (question != null) {
             Picasso.get()
                     .load(question.getImageUrl())
@@ -95,19 +104,21 @@ public class DetailActivity extends AppCompatActivity {
             titleTv.setText(question.getQuestion());
             dateTv.setText(dateTv.getText() + question.getPublishedAt());
             idTv.setText(idTv.getText() + String.valueOf(question.getId()));
-            buildChoices(question.getChoices());
+            buildChoices(question.getChoices(), enableChoice);
+            submitBtn.setEnabled(enableChoice);
         }
     }
 
-    private void buildChoices(List<Choice> choices) {
+    private void buildChoices(List<Choice> choices, boolean enableChoice) {
         submitBtn.setOnClickListener(v -> submitAnswer(choices));
+        choicesContainer.removeAllViews();
         for (Choice choice : choices) {
             RadioButton radioButton = new RadioButton(this);
 
             String description = choice.getChoice();
             String votes = String.valueOf(choice.getVotes());
             String label = getString(R.string.detail_votes);
-            String builtString = String.format("%s %s %s", description,
+            String builtString = String.format("%s%s %s", description,
                     label, votes);
             Spannable textToSpan = new SpannableString(builtString);
 
@@ -117,6 +128,7 @@ public class DetailActivity extends AppCompatActivity {
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             radioButton.setText(textToSpan);
+            radioButton.setEnabled(enableChoice);
             choicesContainer.addView(radioButton);
         }
     }

@@ -35,7 +35,7 @@
 
                 <data
                     android:scheme="@string/scheme_filter"
-                    android:sspPattern="//questions?"/>
+                    android:sspPattern="//questions?" />
                 <data
                     android:scheme="@string/scheme_filter"
                     android:sspPattern="//questions?question_filter.*" />
@@ -51,12 +51,13 @@
         </activity>
         <activity
             android:name=".view.DetailActivity"
-            android:parentActivityName="pt.goncalo.blissquestions.view.QuestionListActivity" >
+            android:parentActivityName=".view.QuestionListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:scheme="@string/scheme_filter"
                     android:sspPattern="//questions?question_id=.*" />

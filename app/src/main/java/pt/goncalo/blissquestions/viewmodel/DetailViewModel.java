@@ -24,7 +24,7 @@ public class DetailViewModel extends ViewModel {
         return questionRepository.getQuestionById(id);
     }
 
-    public void vote(String choice) {
-        //TODO add endpoint in repository and call it
+    public LiveData<Question> vote(String choice) {
+        return questionRepository.vote(questionId, choice);
     }
 }

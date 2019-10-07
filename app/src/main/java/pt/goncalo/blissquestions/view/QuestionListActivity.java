@@ -45,15 +45,6 @@ public class QuestionListActivity extends AppCompatActivity {
         continueWithIntent(getIntent());
     }
 
-    private void continueWithIntent(Intent intent) {
-        if (ActivityUtils.isUrlIntent(intent)) {
-            handleIntentFromURL(intent);
-        } else {
-            Log.i(TAG, "Activity not started from URL");
-            questionViewModel.getQuestions().observe(this, this::onUnfilteredQuestionsReceived);
-        }
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -61,6 +52,15 @@ public class QuestionListActivity extends AppCompatActivity {
             handleIntentFromSearch(intent);
         } else if (ActivityUtils.isUrlIntent(intent)) {
             handleIntentFromURL(intent);
+        }
+    }
+
+    private void continueWithIntent(Intent intent) {
+        if (ActivityUtils.isUrlIntent(intent)) {
+            handleIntentFromURL(intent);
+        } else {
+            Log.i(TAG, "Activity not started from URL");
+            questionViewModel.getQuestions().observe(this, this::onUnfilteredQuestionsReceived);
         }
     }
 
