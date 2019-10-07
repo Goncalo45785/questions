@@ -6,9 +6,19 @@
     <string name="retryButton">Retry</string>
     <string name="load_more">Load More</string>
     <string name="search_hint">Search questions …</string>
+    <string name="detail_published_date">Published: </string>
+    <string name="detail_id">Id#: </string>
+    <string name="detail_votes">#Votes:</string>
+
 
 
     <string name="scheme_filter" translatable="false">blissrecruitment</string>
     <string name="host_filter" translatable="false">questions</string>
     <string name="query_filter" translatable="false">question_filter</string>
+    <string name="query_question_id" translatable="false">question_id</string>
+    <string name="question_id_extra_key" translatable="false">pt.goncalo.blissquestions.question_id</string>
+    <string name="detail_placeholder_title">Empty</string>
+    <string name="detail_vote_button">Vote</string>
+
+
 </resources>

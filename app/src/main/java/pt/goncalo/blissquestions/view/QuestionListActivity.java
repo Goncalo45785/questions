@@ -1,5 +1,13 @@
 package pt.goncalo.blissquestions.view;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.SearchView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,19 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.SearchView;
-
 import java.util.List;
 
 import pt.goncalo.blissquestions.R;
 import pt.goncalo.blissquestions.model.entity.Question;
+import pt.goncalo.blissquestions.utils.ActivityUtils;
 import pt.goncalo.blissquestions.view.adapter.QuestionListAdapter;
 import pt.goncalo.blissquestions.viewmodel.QuestionViewModel;
 
@@ -46,7 +46,7 @@ public class QuestionListActivity extends AppCompatActivity {
     }
 
     private void continueWithIntent(Intent intent) {
-        if (isUrlIntent(intent)) {
+        if (ActivityUtils.isUrlIntent(intent)) {
             handleIntentFromURL(intent);
         } else {
             Log.i(TAG, "Activity not started from URL");
@@ -59,17 +59,13 @@ public class QuestionListActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         if (isSearchIntent(intent)) {
             handleIntentFromSearch(intent);
-        } else if (isUrlIntent(intent)) {
+        } else if (ActivityUtils.isUrlIntent(intent)) {
             handleIntentFromURL(intent);
         }
     }
 
     private boolean isSearchIntent(Intent intent) {
         return Intent.ACTION_SEARCH.equals(intent.getAction());
-    }
-
-    private boolean isUrlIntent(Intent intent) {
-        return intent != null && intent.getData() != null;
     }
 
     private void handleIntentFromURL(Intent intent) {
@@ -99,7 +95,6 @@ public class QuestionListActivity extends AppCompatActivity {
                 searchView.setQuery(query, true);
                 searchView.setIconified(false);
             }
-            //TODO handle query being empty (atm is not triggering search intent)
         }
     }
 
@@ -117,8 +112,8 @@ public class QuestionListActivity extends AppCompatActivity {
         if (questionViewModel.isInSearchMode() && lastKnownQuestions != null && !lastKnownQuestions.isEmpty()) {
             initListAdapter(lastKnownQuestions);
             questionViewModel.setSearchMode(false);
-            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
-                    Color.GREEN);
+//            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
+//                    Color.GREEN);
         } else if (lastKnownQuestions == null || lastKnownQuestions.isEmpty()){
             questionViewModel.getQuestions();
         }
@@ -127,8 +122,8 @@ public class QuestionListActivity extends AppCompatActivity {
     private void onFilteredQuestionsReceived(List<Question> filteredQuestions) {
         if (listAdapter == null || !questionViewModel.isInSearchMode()) {
             initListAdapter(filteredQuestions);
-            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
-                    Color.RED);
+//            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
+//                    Color.RED);
             questionViewModel.setSearchMode(true);
         }
         listAdapter.notifyDataSetChanged();
@@ -137,8 +132,8 @@ public class QuestionListActivity extends AppCompatActivity {
     private void onUnfilteredQuestionsReceived(List<Question> unfilteredQuestions) {
         if (listAdapter == null || questionViewModel.isInSearchMode()) {
             initListAdapter(unfilteredQuestions);
-            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
-                    Color.GREEN);
+//            getWindow().getDecorView().findViewById(android.R.id.content).setBackgroundColor(
+//                    Color.GREEN);
             questionViewModel.setSearchMode(false);
         }
         listAdapter.notifyDataSetChanged();
