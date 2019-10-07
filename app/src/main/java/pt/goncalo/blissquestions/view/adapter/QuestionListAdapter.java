@@ -1,6 +1,8 @@
 package pt.goncalo.blissquestions.view.adapter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import pt.goncalo.blissquestions.R;
 import pt.goncalo.blissquestions.model.entity.Question;
+import pt.goncalo.blissquestions.view.DetailActivity;
 
 public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapter.ViewHolder> {
     private List<Question> dataset;
@@ -36,9 +39,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.itemView.setOnClickListener(v -> {
-            //TODO open details
-        });
+
         Question question = dataset.get(position);
         holder.title.setText(question.getQuestion());
         holder.date.setText(question.getPublishedAt());
@@ -47,6 +48,12 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
                 .placeholder(R.drawable.ic_broken_image_primary_24dp)
                 .error(R.drawable.ic_broken_image_primary_24dp)
                 .into(holder.thumbnail);
+        holder.itemView.setOnClickListener(v -> {
+            Context context = holder.itemView.getContext();
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra(context.getString(R.string.question_id_extra_key), question.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override

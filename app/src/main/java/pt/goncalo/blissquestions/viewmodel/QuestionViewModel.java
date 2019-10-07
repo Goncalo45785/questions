@@ -5,18 +5,18 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
 import pt.goncalo.blissquestions.model.QuestionRepository;
 import pt.goncalo.blissquestions.model.entity.Question;
 
-public class QuestionViewModel extends AndroidViewModel {
+public class QuestionViewModel extends ViewModel {
     private QuestionRepository questionRepository;
     private boolean isInSearchMode;
 
-    public QuestionViewModel(@NonNull Application application) {
-        super(application);
+    public QuestionViewModel() {
         questionRepository = QuestionRepository.getInstance();
     }
 

@@ -28,21 +28,40 @@
             android:name=".view.QuestionListActivity"
             android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!--This activity will be started when an URL with the format scheme://host is
-                opened -->
+
                 <data
                     android:scheme="@string/scheme_filter"
-                    android:host="@string/host_filter"/>
+                    android:sspPattern="//questions?" />
+                <data
+                    android:scheme="@string/scheme_filter"
+                    android:sspPattern="//questions?question_filter.*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
+
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable"
-                android:value="QuestionListActivity"/>
+                android:value="QuestionListActivity" />
+        </activity>
+        <activity
+            android:name=".view.DetailActivity"
+            android:parentActivityName=".view.QuestionListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="@string/scheme_filter"
+                    android:sspPattern="//questions?question_id=.*" />
+            </intent-filter>
         </activity>
     </application>
 

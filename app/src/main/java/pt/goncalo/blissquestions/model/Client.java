@@ -38,4 +38,14 @@ public class Client {
         Log.i(TAG, "getQuestions Requesting...");
         api.getQuestions(limit, offset, filter).enqueue(callback);
     }
+
+    void getQuestionById(int id, Callback<Question> callback) {
+        Log.i(TAG, "getQuestionById Requesting...");
+        api.getQuestion(id).enqueue(callback);
+    }
+
+    void vote(int id, String choice, Callback<Question> callback) {
+        Log.i(TAG, "vote Requesting...");
+        api.vote(id, choice).enqueue(callback);
+    }
 }
