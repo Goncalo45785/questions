@@ -70,6 +70,33 @@ public class QuestionRepository {
         return serverHealth;
     }
 
+
+    public LiveData<Boolean> share(String email, String url) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        apiClient.share(email, url, new Callback<Health>() {
+            @Override
+            public void onResponse(Call<Health> call, Response<Health> response) {
+                int statusCode = response.code();
+                Health healthStatus = response.body();
+                if (healthStatus != null) {
+                    Log.i(TAG, String.format("share Response [%s] %s", statusCode,
+                            healthStatus.getStatus()));
+                    result.postValue(healthStatus.getStatus().equals(Health.STATUS_OK));
+                } else {
+                    Log.i(TAG, String.format("share Bad Response [%s]", statusCode));
+                    result.postValue(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Health> call, Throwable t) {
+                Log.wtf(TAG, String.format("share Failed: %s", t.getMessage()));
+                result.postValue(false);
+            }
+        });
+        return result;
+    }
+
     public LiveData<Question> vote(int questionId, String choice) {
         MutableLiveData<Question> result = new MutableLiveData<>();
         apiClient.vote(questionId, choice, new Callback<Question>() {
@@ -190,6 +217,10 @@ public class QuestionRepository {
         return loadedFilteredQuestions > 0;
     }
 
+    public int getLoadedFilteredQuestions() {
+        return loadedFilteredQuestions;
+    }
+
     private void initQuestionLists(boolean isFiltered) {
         if (isFiltered) {
             if (filteredQuestions == null) {
@@ -221,4 +252,6 @@ public class QuestionRepository {
             }
         }
     }
+
+
 }

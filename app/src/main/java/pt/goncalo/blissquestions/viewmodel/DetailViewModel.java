@@ -13,7 +13,7 @@ import pt.goncalo.blissquestions.model.entity.Question;
 
 public class DetailViewModel extends ViewModel {
     private QuestionRepository questionRepository;
-    private int questionId;
+    private int questionId = -1;
 
     public DetailViewModel() {
         questionRepository = QuestionRepository.getInstance();
@@ -26,5 +26,9 @@ public class DetailViewModel extends ViewModel {
 
     public LiveData<Question> vote(String choice) {
         return questionRepository.vote(questionId, choice);
+    }
+
+    public int getQuestionId() {
+        return questionId;
     }
 }

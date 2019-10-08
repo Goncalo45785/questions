@@ -9,6 +9,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,6 +51,25 @@ public class DetailActivity extends NetworkAwareActivity {
         detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
 
         handleIntent(getIntent());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        int questionId = detailViewModel.getQuestionId();
+        if (id == R.id.action_share && questionId != -1) {
+            Intent share = new Intent(this, ShareActivity.class);
+            String url = "blissapplications://questions?question_id=" + questionId;
+            share.putExtra(getString(R.string.share_url_extra_key), url);
+            startActivity(share);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void handleIntent(Intent intent) {

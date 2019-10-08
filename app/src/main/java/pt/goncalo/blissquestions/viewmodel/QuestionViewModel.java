@@ -15,6 +15,7 @@ import pt.goncalo.blissquestions.model.entity.Question;
 public class QuestionViewModel extends ViewModel {
     private QuestionRepository questionRepository;
     private boolean isInSearchMode;
+    private String lastSearched = "";
 
     public QuestionViewModel() {
         questionRepository = QuestionRepository.getInstance();
@@ -26,6 +27,10 @@ public class QuestionViewModel extends ViewModel {
     }
 
     public LiveData<List<Question>> getQuestionsForFilter(String filter) {
+        if (!lastSearched.equals(filter)){
+            clearSearch();
+        }
+        lastSearched = filter;
         return questionRepository.getQuestionsWithFilter(filter);
     }
 
@@ -33,7 +38,7 @@ public class QuestionViewModel extends ViewModel {
         return questionRepository.getQuestions();
     }
 
-    public boolean hasQuestions() {
+    public boolean hasUnfilteredQuestions() {
         return questionRepository.hasUnfilteredQuestions();
     }
 
@@ -51,5 +56,17 @@ public class QuestionViewModel extends ViewModel {
 
     public void clearSearch() {
         questionRepository.clearFilteredQuestions();
+    }
+
+    public LiveData<Boolean> share(String email, String url) {
+        return questionRepository.share(email, url);
+    }
+
+    public String getLastSearched() {
+        return lastSearched;
+    }
+
+    public int getSearchLoaded() {
+        return questionRepository.getLoadedFilteredQuestions();
     }
 }

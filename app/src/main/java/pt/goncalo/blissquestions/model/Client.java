@@ -48,4 +48,8 @@ public class Client {
         Log.i(TAG, "vote Requesting...");
         api.vote(id, choice).enqueue(callback);
     }
+
+    void share(String email, String url, Callback<Health> callback) {
+        api.share(email, url).enqueue(callback);
+    }
 }
