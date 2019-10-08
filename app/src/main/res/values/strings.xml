@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">BlissQuestions</string>
+    <string name="status_ok">Service available.</string>
+    <string name="status_nok">The service is not available right now.</string>
+    <string name="status_checking">Checking for service availability …</string>
+    <string name="retryButton">Retry</string>
+    <string name="load_more">Load More</string>
+    <string name="search_hint">Search questions …</string>
+    <string name="detail_published_date">Published: </string>
+    <string name="detail_id">Id#: </string>
+    <string name="detail_votes"> #Votes:</string>
+
+
+    <string name="scheme_filter" translatable="false">blissrecruitment</string>
+    <string name="host_filter" translatable="false">questions</string>
+    <string name="query_filter" translatable="false">question_filter</string>
+    <string name="query_question_id" translatable="false">question_id</string>
+    <string name="question_id_extra_key" translatable="false">pt.goncalo.blissquestions.question_id</string>
+    <string name="detail_placeholder_title">Empty</string>
+    <string name="detail_vote_button">Vote</string>
+    <string name="no_network_connection">No network connection.\nRestore internet access to
+    proceed.</string>
+    <string name="share">Share</string>
+    <string name="share_url_extra_key">pt.goncalo.blissquestions.share_url_extra_key</string>
+    <string name="share_title_extra_key">pt.goncalo.blissquestions.share_title_extra_key</string>
+    <string name="send_email">Send email</string>
+    <string name="choose_another_app">Choose another app</string>
+    <string name="share_email_sent">Email sent!</string>
+    <string name="share_email_failed">Failed to send email. Try again.</string>
+    <string name="questions_list_no_search_error">No search to share.</string>
+
+
+</resources>
