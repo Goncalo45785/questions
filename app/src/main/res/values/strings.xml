@@ -21,6 +21,12 @@
     <string name="no_network_connection">No network connection.\nRestore internet access to
     proceed.</string>
     <string name="share">Share</string>
+    <string name="share_url_extra_key">pt.goncalo.blissquestions.share_url_extra_key</string>
+    <string name="share_title_extra_key">pt.goncalo.blissquestions.share_title_extra_key</string>
+    <string name="send_email">Send email</string>
+    <string name="choose_another_app">Choose another app</string>
+    <string name="share_email_sent">Email sent!</string>
+    <string name="share_email_failed">Failed to send email. Try again.</string>
 
 
 </resources>

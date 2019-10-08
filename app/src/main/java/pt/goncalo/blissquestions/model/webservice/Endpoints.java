@@ -8,6 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -19,15 +20,24 @@ public interface Endpoints {
     Call<Health> getHealth();
 
     @GET("/questions")
-    Call<List<Question>> getQuestions(@Query("limit") int limit, @Query("offset") int offset,
+    Call<List<Question>> getQuestions(
+            @Query("limit") int limit,
+            @Query("offset") int offset,
             @Query("filter") String filter);
 
     @GET("/questions/{id}")
-    Call<Question> getQuestion(@Path("id") int questionId);
+    Call<Question> getQuestion(
+            @Path("id") int questionId);
 
     @FormUrlEncoded
-    @PUT("questions/{id}")
+    @PUT("/questions/{id}")
     Call<Question> vote(
             @Path("id") int questionId,
             @Field("choice") String choice);
+
+    @FormUrlEncoded
+    @POST("/share")
+    Call<Health>  share(
+            @Field("destination_email") String email,
+            @Field("content_url") String url);
 }

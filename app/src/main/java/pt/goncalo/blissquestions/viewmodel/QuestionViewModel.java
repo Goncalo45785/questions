@@ -52,4 +52,8 @@ public class QuestionViewModel extends ViewModel {
     public void clearSearch() {
         questionRepository.clearFilteredQuestions();
     }
+
+    public LiveData<Boolean> share(String email, String url) {
+        return questionRepository.share(email, url);
+    }
 }
