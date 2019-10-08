@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,6 +59,34 @@ public class QuestionListActivity extends NetworkAwareActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        String filter = questionViewModel.getLastSearched();
+        if (id == R.id.action_share && questionViewModel.isInSearchMode() && !filter.isEmpty()) {
+            Intent share = new Intent(this, ShareActivity.class);
+            String url =
+                    String.format(
+                            "blissapplications://questions?limit=%s&offset=0&filter=%s",
+                            questionViewModel.getSearchLoaded(),
+                            filter);
+            share.putExtra(getString(R.string.share_url_extra_key), url);
+            startActivity(share);
+        } else {
+            Toast toast = Toast.makeText(this,
+                    getString(R.string.questions_list_no_search_error),
+                    Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void continueWithIntent(Intent intent) {
         if (ActivityUtils.isUrlIntent(intent)) {
             handleIntentFromURL(intent);
@@ -76,7 +107,7 @@ public class QuestionListActivity extends NetworkAwareActivity {
         if (query == null) {
             /*If the question_filter parameter is missing the user should simply be placed at the
             listing. hasUnfilteredQuestions is used to avoid re-fetching questions.*/
-            if (!questionViewModel.hasQuestions()) {
+            if (!questionViewModel.hasUnfilteredQuestions()) {
                 questionViewModel.getQuestions();
             } else if (questionViewModel.isInSearchMode()){
                 endSearch();

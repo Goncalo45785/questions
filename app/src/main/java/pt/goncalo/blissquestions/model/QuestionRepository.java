@@ -217,6 +217,10 @@ public class QuestionRepository {
         return loadedFilteredQuestions > 0;
     }
 
+    public int getLoadedFilteredQuestions() {
+        return loadedFilteredQuestions;
+    }
+
     private void initQuestionLists(boolean isFiltered) {
         if (isFiltered) {
             if (filteredQuestions == null) {

@@ -27,6 +27,7 @@
     <string name="choose_another_app">Choose another app</string>
     <string name="share_email_sent">Email sent!</string>
     <string name="share_email_failed">Failed to send email. Try again.</string>
+    <string name="questions_list_no_search_error">No search to share.</string>
 
 
 </resources>
